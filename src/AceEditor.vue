@@ -1,18 +1,129 @@
 <template>
-  <div id="ace-editor">
-    function foo(items) { var x = "All this is syntax highlighteddd"; return x;
-    }
-  </div>
+  <pre
+    id="ace-editor"
+    :style="{
+      width,
+      height,
+      lineHeight
+    }"
+  ></pre>
 </template>
 
 <script>
-import ace from "ace-builds/src-noconflict/ace.js";
+import AceEditor from "brace";
+import "brace/mode/javascript";
+import "brace/theme/monokai";
+
 export default {
   name: "AceEditor",
+  props: {
+    fontSize: {
+      type: String,
+      default: "14px"
+    },
+    height: {
+      type: String,
+      default: "100%"
+    },
+    highlightActiveLine: {
+      type: Boolean,
+      default: true
+    },
+    lineHeight: {
+      type: String,
+      default: "28px"
+    },
+    lineNumber: {
+      type: Boolean,
+      default: true
+    },
+    mode: {
+      type: String,
+      default: undefined
+    },
+    theme: {
+      type: String,
+      default: undefined
+    },
+    value: {
+      type: String,
+      default: ""
+    },
+    width: {
+      type: String,
+      default: "100%"
+    }
+  },
+  data() {
+    return {
+      editor: null
+    };
+  },
+  watch: {
+    fontSize() {
+      this.setFontSize();
+    },
+    highlightActiveLine() {
+      this.setHighlightActiveLine();
+    },
+    lineNumber() {
+      this.setLineNumber();
+    },
+    mode() {
+      this.setMode();
+    },
+    theme() {
+      this.setTheme();
+    },
+    value(val) {
+      if (val === this.editor.getValue()) return;
+      this.setValue();
+    }
+  },
   mounted() {
-    var editor = ace.edit("ace-editor");
-    editor.setTheme("ace/theme/monokai");
-    editor.session.setMode("ace/mode/javascript");
+    this.editor = AceEditor.edit(this.$el);
+    this.editor.setShowPrintMargin(false);
+    this.setValue();
+    this.setFontSize();
+    this.setLineNumber();
+    this.setHighlightActiveLine();
+    this.listening();
+    this.setMode();
+    this.setTheme();
+    this.$on("init", this.editor);
+  },
+  methods: {
+    setFontSize() {
+      this.editor.setFontSize(this.fontSize);
+    },
+    setHighlightActiveLine() {
+      this.editor.setHighlightActiveLine(this.highlightActiveLine);
+    },
+    setLineNumber() {
+      this.editor.renderer.setShowGutter(this.lineNumber);
+    },
+    setMode() {
+      if (!this.mode) return false;
+      this.editor.session.setMode("ace/mode/" + this.mode);
+    },
+    setTheme() {
+      if (!this.theme) return false;
+      this.editor.setTheme("ace/theme/" + this.theme);
+    },
+    setValue() {
+      this.editor.setValue(this.value || "", true);
+    },
+    listening() {
+      this.editor.on("change", () => {
+        this.$emit("input", this.editor.getValue());
+      });
+      this.editor.on("blur", () => {
+        this.$emit("bulr", this.editor);
+      });
+      this.editor.on("focus", () => {
+        this.$emit("focus", this.editor);
+      });
+    }
   }
 };
 </script>
