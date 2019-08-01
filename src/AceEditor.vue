@@ -3,8 +3,7 @@
     id="ace-editor"
     :style="{
       width,
-      height,
-      lineHeight
+      height
     }"
   ></pre>
 </template>
@@ -17,29 +16,17 @@ import "brace/theme/monokai";
 export default {
   name: "AceEditor",
   props: {
-    fontSize: {
-      type: String,
-      default: "14px"
-    },
     height: {
       type: String,
       default: "100%"
     },
-    highlightActiveLine: {
-      type: Boolean,
-      default: true
-    },
-    lineHeight: {
-      type: String,
-      default: "28px"
-    },
-    lineNumber: {
-      type: Boolean,
-      default: true
-    },
     mode: {
       type: String,
       default: undefined
+    },
+    options: {
+      type: Object,
+      default: () => ({})
     },
     theme: {
       type: String,
@@ -60,15 +47,6 @@ export default {
     };
   },
   watch: {
-    fontSize() {
-      this.setFontSize();
-    },
-    highlightActiveLine() {
-      this.setHighlightActiveLine();
-    },
-    lineNumber() {
-      this.setLineNumber();
-    },
     mode() {
       this.setMode();
     },
@@ -81,27 +59,17 @@ export default {
     }
   },
   mounted() {
+    // Configure editor
     this.editor = AceEditor.edit(this.$el);
-    this.editor.setShowPrintMargin(false);
-    this.setValue();
-    this.setFontSize();
-    this.setLineNumber();
-    this.setHighlightActiveLine();
-    this.listening();
     this.setMode();
     this.setTheme();
+    this.setValue();
+
+    // Register events
+    this.registerEvents();
     this.$on("init", this.editor);
   },
   methods: {
-    setFontSize() {
-      this.editor.setFontSize(this.fontSize);
-    },
-    setHighlightActiveLine() {
-      this.editor.setHighlightActiveLine(this.highlightActiveLine);
-    },
-    setLineNumber() {
-      this.editor.renderer.setShowGutter(this.lineNumber);
-    },
     setMode() {
       if (!this.mode) return false;
       this.editor.session.setMode("ace/mode/" + this.mode);
@@ -113,17 +81,14 @@ export default {
     setValue() {
       this.editor.setValue(this.value || "", true);
     },
-    listening() {
+    registerEvents() {
       this.editor.on("change", () => {
-        console.log("Change");
         this.$emit("input", this.editor.getValue());
       });
       this.editor.on("blur", () => {
-        console.log("Blur");
         this.$emit("blur", this.editor);
       });
       this.editor.on("focus", () => {
-        console.log("Focus");
         this.$emit("focus", this.editor);
       });
     }
