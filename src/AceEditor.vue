@@ -5,6 +5,9 @@
 <script>
 import AceEditor from "brace";
 
+// Import searchbox
+import "brace/ext/searchbox";
+
 export default {
   name: "AceEditor",
   props: {
@@ -137,6 +140,7 @@ export default {
   }
 };
 </script>
+
 <style scoped lang="scss">
 #ace-editor {
   position: absolute;
