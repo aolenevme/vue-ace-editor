@@ -4,12 +4,14 @@
 
 <script>
 import AceEditor from "brace";
-import "brace/mode/javascript";
-import "brace/theme/monokai";
 
 export default {
   name: "AceEditor",
   props: {
+    width: {
+      type: String,
+      default: "100%"
+    },
     height: {
       type: String,
       default: "100%"
@@ -19,7 +21,6 @@ export default {
       type: String,
       default: undefined
     },
-
     // The whole list of AceEditor`s options: https://github.com/ajaxorg/ace/wiki/Configuring-Ace
     options: {
       type: Object,
@@ -34,11 +35,6 @@ export default {
     value: {
       type: String,
       default: ""
-    },
-
-    width: {
-      type: String,
-      default: "100%"
     }
   },
   data() {
@@ -56,18 +52,19 @@ export default {
     }
   },
   watch: {
-    mode() {
-      this.setMode();
-    },
-    theme() {
-      this.setTheme();
-    },
     value(val) {
-      if (val === this.editor.getValue()) return;
+      if (val === this.editor.getValue()) {
+        return;
+      }
+
       this.setValue();
     }
   },
-  mounted() {
+  async mounted() {
+    // Load assets
+    await this.loadMode();
+    await this.loadTheme();
+
     // Configure editor
     this.editor = AceEditor.edit(this.$el);
     this.setMode();
@@ -80,26 +77,22 @@ export default {
     this.$on("init", this.editor);
   },
   methods: {
-    // Set editor`s mode
-    setMode() {
-      if (!this.mode) return false;
-      this.editor.session.setMode("ace/mode/" + this.mode);
+    /**
+     * Loads mode asynchronously
+     * @returns {Promise<*>}
+     */
+    async loadMode() {
+      const module = await import(`brace/mode/${this.mode}`);
+      return module.default;
     },
 
-    // Set editor`s options
-    setOptions() {
-      this.editor.setOptions(this.options);
-    },
-
-    // Set editor`s theme
-    setTheme() {
-      if (!this.theme) return false;
-      this.editor.setTheme("ace/theme/" + this.theme);
-    },
-
-    // Set editor`s value
-    setValue() {
-      this.editor.setValue(this.value || "", true);
+    /**
+     * Loads theme asynchronously
+     * @returns {Promise<*>}
+     */
+    async loadTheme() {
+      const module = await import(`brace/theme/${this.theme}`);
+      return module.default;
     },
 
     // This method registers all editor`s events
@@ -118,11 +111,32 @@ export default {
       this.editor.on("focus", () => {
         this.$emit("focus", this.editor);
       });
+    },
+
+    // Set editor`s mode
+    setMode() {
+      if (!this.mode) return false;
+      this.editor.session.setMode(`ace/mode/${this.mode}`);
+    },
+
+    // Set editor`s options
+    setOptions() {
+      this.editor.setOptions(this.options);
+    },
+
+    // Set editor`s theme
+    setTheme() {
+      if (!this.theme) return false;
+      this.editor.setTheme(`ace/theme/${this.theme}`);
+    },
+
+    // Set editor`s value
+    setValue() {
+      this.editor.setValue(this.value || "", true);
     }
   }
 };
 </script>
-
 <style scoped lang="scss">
 #ace-editor {
   position: absolute;

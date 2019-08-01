@@ -13,5 +13,5 @@ storiesOf("AceEditor", module).add("default", () => ({
       value: "function () {return true;}"
     };
   },
-  template: `<ace-editor v-model="value" mode="javascript" theme="monokai" :options="options"/>`
+  template: `<ace-editor v-model="value" mode="markdown" theme="twilight" :options="options"/>`
 }));
