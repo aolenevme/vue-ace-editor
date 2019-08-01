@@ -115,12 +115,15 @@ export default {
     },
     listening() {
       this.editor.on("change", () => {
+        console.log("Change");
         this.$emit("input", this.editor.getValue());
       });
       this.editor.on("blur", () => {
-        this.$emit("bulr", this.editor);
+        console.log("Blur");
+        this.$emit("blur", this.editor);
       });
       this.editor.on("focus", () => {
+        console.log("Focus");
         this.$emit("focus", this.editor);
       });
     }
