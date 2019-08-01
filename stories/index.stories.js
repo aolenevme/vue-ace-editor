@@ -4,5 +4,14 @@ import AceEditor from "../src/AceEditor";
 
 storiesOf("AceEditor", module).add("default", () => ({
   components: { AceEditor },
-  template: "<ace-editor />"
+  data() {
+    return {
+      options: {
+        fontSize: "1rem",
+        autoScrollEditorIntoView: true
+      },
+      value: "function () {return true;}"
+    };
+  },
+  template: `<ace-editor v-model="value" mode="javascript" theme="monokai" :options="options"/>`
 }));
