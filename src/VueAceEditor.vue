@@ -1,15 +1,23 @@
 <template>
-  <pre id="ace-editor" :style="inlineStyle" />
+  <pre id="vue-ace-editor" :style="inlineStyle" />
 </template>
 
 <script>
+/**
+ * This is a vue-component for editing different types of programming/markdown languages in the browser.
+ * Underneath it uses AceEditor: https://github.com/ajaxorg/ace
+ * For easier usage, the special brace module https://github.com/thlorenz/brace is used.
+ * Props` hints:
+ *    List of options: https://github.com/ajaxorg/ace/wiki/Configuring-Ace
+ *    List of modes: https://github.com/thlorenz/brace/tree/master/mode
+ *    List of themes: https://github.com/thlorenz/brace/tree/master/theme
+ */
 import AceEditor from "brace";
 
-// Import searchbox
-import "brace/ext/searchbox";
+import EditorModuleEnum from "./EditorModuleEnum.js";
 
 export default {
-  name: "AceEditor",
+  name: "VueAceEditor",
   props: {
     width: {
       type: String,
@@ -20,11 +28,17 @@ export default {
       default: "100%"
     },
 
+    // Allow searching in the editor
+    allowSearch: {
+      type: Boolean,
+      default: false
+    },
+
     mode: {
       type: String,
       default: undefined
     },
-    // The whole list of AceEditor`s options: https://github.com/ajaxorg/ace/wiki/Configuring-Ace
+
     options: {
       type: Object,
       default: () => ({})
@@ -64,9 +78,22 @@ export default {
     }
   },
   async mounted() {
-    // Load assets
-    await this.loadMode();
-    await this.loadTheme();
+    // Load modules dynamically
+    try {
+      if (this.mode) {
+        await this.loadModule(EditorModuleEnum.MODE, this.mode);
+      }
+
+      if (this.theme) {
+        await this.loadModule(EditorModuleEnum.THEME, this.theme);
+      }
+
+      if (this.allowSearch) {
+        await this.loadModule(EditorModuleEnum.EXT, "searchbox");
+      }
+    } catch (error) {
+      console.error(error);
+    }
 
     // Configure editor
     this.editor = AceEditor.edit(this.$el);
@@ -81,24 +108,33 @@ export default {
   },
   methods: {
     /**
-     * Loads mode asynchronously
+     * Loads module asynchronously
+     * TODO: Write the method this way because of this issue of webpack: https://github.com/webpack/webpack/issues/6680
+     * @props {EditorModuleEnum} moduleType - Whether the module is theme or mode
+     * @props {String} moduleName - Name of the module
      * @returns {Promise<*>}
      */
-    async loadMode() {
-      const module = await import(`brace/mode/${this.mode}`);
-      return module.default;
+    async loadModule(moduleType, moduleName) {
+      let loadedModule = {};
+
+      switch (moduleType) {
+        case EditorModuleEnum.THEME:
+          loadedModule = await import("brace/theme/" + moduleName);
+          break;
+        case EditorModuleEnum.MODE:
+          loadedModule = await import("brace/mode/" + moduleName);
+          break;
+        case EditorModuleEnum.EXT:
+          loadedModule = await import("brace/ext/" + moduleName);
+          break;
+        default:
+          return;
+      }
+
+      return loadedModule.default;
     },
 
-    /**
-     * Loads theme asynchronously
-     * @returns {Promise<*>}
-     */
-    async loadTheme() {
-      const module = await import(`brace/theme/${this.theme}`);
-      return module.default;
-    },
-
-    // This method registers all editor`s events
+    // This method registers all editor`s events1
     registerEvents() {
       // Blur event
       this.editor.on("blur", () => {
@@ -142,7 +178,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-#ace-editor {
+#vue-ace-editor {
   position: absolute;
   top: 0;
   right: 0;

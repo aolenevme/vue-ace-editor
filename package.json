@@ -2,9 +2,15 @@
   "name": "vue-ace-editor",
   "version": "0.1.0",
   "private": true,
+  "main": "src/index.js",
+  "files": [
+    "dist/*",
+    "src/*",
+    "package.json",
+    "package-lock.json"
+  ],
   "scripts": {
-    "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
+    "build": "vue-cli-service build --target lib --name vue-ace-editor ./src/index.js ",
     "lint": "vue-cli-service lint",
     "test:unit": "vue-cli-service test:unit",
     "storybook": "start-storybook -p 6006",
