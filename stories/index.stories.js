@@ -1,17 +1,35 @@
 import { storiesOf } from "@storybook/vue";
 
-import AceEditor from "../src/AceEditor";
+import VueAceEditor from "../src/VueAceEditor.vue";
 
-storiesOf("AceEditor", module).add("default", () => ({
-  components: { AceEditor },
-  data() {
-    return {
-      options: {
-        fontSize: "1rem",
-        autoScrollEditorIntoView: true
-      },
-      value: "function () {return true;}"
-    };
-  },
-  template: `<ace-editor v-model="value" mode="javascript" theme="clouds" :options="options"/>`
-}));
+storiesOf("VueAceEditor", module)
+  .add("javascript editor", () => ({
+    components: { VueAceEditor },
+    data() {
+      return {
+        options: {
+          fontSize: "1rem"
+        },
+        value: `
+        function simpleJavascriptMethod() {
+          return 😁;
+        }
+      `
+      };
+    },
+    template: `<vue-ace-editor v-model="value" mode="javascript" theme="twilight" :options="options"/>`
+  }))
+  .add("markdown editor", () => ({
+    components: { VueAceEditor },
+    data() {
+      return {
+        options: {
+          fontSize: "1rem"
+        },
+        value: `
+        #### This is markdown 🤣
+      `
+      };
+    },
+    template: `<vue-ace-editor v-model="value" mode="markdown" theme="xcode" :options="options"/>`
+  }));
