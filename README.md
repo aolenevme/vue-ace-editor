@@ -30,5 +30,4 @@ import 'vue-ace-editor/dist/vue-ace-editor.css';
 
 ### Feedback
 You can write me on:
-Telegram: @aolenev
-Email: ao.aftr@gmail.com
+Add contacts
