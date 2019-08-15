@@ -160,7 +160,14 @@ export default {
 
     // Set editor`s options
     setOptions() {
-      this.editor.setOptions(this.options);
+      this.editor.getOptions();
+      const newSetOptions = {
+        ...this.editor.getOptions(),
+        ...this.options,
+        // Hardcoded the fontWeight prop
+        fontWeight: "1rem"
+      };
+      this.editor.setOptions(newSetOptions);
     },
 
     // Set editor`s theme
@@ -184,5 +191,12 @@ export default {
   right: 0;
   bottom: 0;
   left: 0;
+}
+
+#lm-editor /deep/ * {
+  // Because of this issue: https://jaspreetchahal.org/ace-editor-cursor-position-has-space-between-expected-position-and-the-current-position/
+  font-family: monospace !important;
+  font-size: 1rem !important;
+  line-height: 1.5rem !important;
 }
 </style>
