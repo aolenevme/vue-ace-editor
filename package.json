@@ -4,7 +4,6 @@
   "private": true,
   "main": "src/index.js",
   "files": [
-    "dist/*",
     "src/*",
     "package.json",
     "package-lock.json"
