@@ -7,14 +7,19 @@
  * For the import [the brace library](https://github.com/thlorenz/brace) is used.
 
 ### How to use
- * Import the assets in your `index.js` to get it.
+ * Import the editor into your component and register it:
 ~~~~
-import 'vue-ace-editor';
-import 'vue-ace-editor/dist/vue-ace-editor.css';
+import VueAceEditor from "vue-ace-editor";
+
+
+export default YourComponent {
+    name: "YourComponent",
+    components: { VueAceEditor }
+}
 ~~~~
  * You can use the component this way: 
  ~~~~
-<vue-ace-editor v-model="value" mode="javascript" theme="twilight" :options="options"/>
+<vue-ace-editor v-model="value" mode="javascript" theme="twilight" allow-search :options="options"/>
 ~~~~
 
 ### Props
@@ -27,7 +32,3 @@ import 'vue-ace-editor/dist/vue-ace-editor.css';
 | theme        | String  | undefined | List of themes: https://github.com/thlorenz/brace/tree/master/theme  |
 | options      | Object  | {}        | List of options: https://github.com/ajaxorg/ace/wiki/Configuring-Ace |
 | value        | String  | ""        | The text in the editor                                               |
-
-### Feedback
-You can write me on:
-Add contacts
