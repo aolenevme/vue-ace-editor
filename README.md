@@ -19,7 +19,7 @@ export default YourComponent {
 ~~~~
  * You can use the component this way: 
  ~~~~
-<vue-ace-editor v-model="value" mode="javascript" theme="twilight" allow-search :options="options"/>
+<vue-ace-editor v-model="value" mode="javascript" theme="twilight" allow-search :options="options" />
 ~~~~
 
 ### Props
