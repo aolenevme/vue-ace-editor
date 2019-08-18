@@ -109,7 +109,7 @@ export default {
   methods: {
     /**
      * Loads module asynchronously
-     * TODO: Write the method this way because of this issue of webpack: https://github.com/webpack/webpack/issues/6680
+     * TODO: Wrote the method this way because of this issue of webpack: https://github.com/webpack/webpack/issues/6680
      * @props {EditorModuleEnum} moduleType - Whether the module is theme or mode
      * @props {String} moduleName - Name of the module
      * @returns {Promise<*>}
